@@ -1325,7 +1325,7 @@
             const amount = parseInt(document.getElementById('wd-amount').value);
 
             if (!accNum || !accName || !amount) return alert("Please fill all fields.");
-            if (amount < 15000) return alert("Minimum withdrawal is Rs. 15,000.");
+            if (amount < 1500) return alert("Minimum withdrawal is Rs. 15,00.");
             if (amount > currentUser.balance) return alert("Insufficient balance.");
 
             currentUser.balance -= amount;
