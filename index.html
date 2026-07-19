@@ -727,27 +727,7 @@
             if (pass.length < 6) return alert("Password must be 6+ chars.");
             if (pass !== confirm) return alert("Passwords do not match.");
             if (users.find(u => u.email === email)) return alert("User already exists.");
-function handleReferralClick() {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // اگر لیمٹ 5 ہو چکی ہے تو کوئی ایڈ نہ کھلے، صرف میسج آئے
-    if (currentUser.referrals >= 5) {
-        alert("⛔ آپ اپنی 5 ریفرلز کی لیمٹ پہلے ہی مکمل کر چکے ہیں! اب آپ مزید ریفرل نہیں کر سکتے۔");
-        return; // یہاں کوڈ رک جاتا ہے، ایڈ نہیں کھلے گا، پوائنٹ نہیں ملے گا
-    }
-
-    // اگر لیمٹ 5 سے کم ہے تو ہی ایڈ کھلے اور پوائنٹس ملیں
-    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb1f8f1c48492c43', '_blank');
-
-    setTimeout(() => {
-        currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        currentUser.referrals += 1;
-        currentUser.points += 25;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        if (typeof updateUI === 'function') updateUI();
-        alert(`🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے! کل ریفرلز: ${currentUser.referrals}/5`);
-    }, 3000);
-}
             const newUser = {
                 name, email, pass,
                 points: 0,
