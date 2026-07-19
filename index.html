@@ -823,13 +823,12 @@
             document.getElementById('box-progress-bar').style.width = progress + "%";
             document.getElementById('box-progress-text').innerText = (currentUser.points % 500) + "/500 Pts";
             // Referral Progress
-// 1. ریفرلز کو 5 سے زیادہ ہونے سے روکیں
-let displayRefs = Math.min(currentUser.referrals, 5);
+// === مکمل ریفرل لاجک (لیمنٹ 5 پر روکے گا، پوائنٹس نہیں دے گا) ===
+let displayRefs = Math.min(currentUser.referrals, 5); // 5 سے زیادہ نہیں دکھے گا
 const refProg = (displayRefs / 5) * 100;
 document.getElementById('ref-progress-bar').style.width = Math.min(refProg, 100) + '%';
 document.getElementById('ref-count-display').innerText = displayRefs + "/5";
 document.getElementById('ref-link-text').innerText = "earndost.pk/?ref=" + currentUser.refCode;
-
             // Daily Bonus
             const now = Date.now();
             const btn = document.getElementById('daily-bonus-btn');
