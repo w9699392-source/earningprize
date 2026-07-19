@@ -817,40 +817,34 @@
             document.getElementById('stat-boxes').innerText = currentUser.prizeBoxes;
             document.getElementById('stat-pkr').innerText = currentUser.balance;
             document.getElementById('stat-refs').innerText = currentUser.referrals + "/5";
-function simulateReferral() {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // 1. چیک کریں کہ لیمٹ 5 تو نہیں ہو گئی
-    if (currentUser.referrals >= 5) {
-        alert("⛔ آپ اپنی 5 ریفرلز کی لیمٹ پہلے ہی مکمل کر چکے ہیں! اب آپ مزید ریفرل نہیں کر سکتے۔");
-        return; // یہاں کوڈ رک جائے گا
-    }
-
-
-    // 2. ایڈ کھولیں
-    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb1f8f1c48492c43', '_blank');
-
-    // 3. 3 سیکنڈ بعد پوائنٹس دیں
-    setTimeout(() => {
-        currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        currentUser.referrals += 1;
-        currentUser.points += 25;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        if (typeof updateUI === 'function') updateUI();
-        alert(`🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے!`);
-    }, 3000);
-        }
             // Box Progress
             const progress = (currentUser.points % 500) / 500 * 100;
             document.getElementById('box-progress-bar').style.width = progress + "%";
             document.getElementById('box-progress-text').innerText = (currentUser.points % 500) + "/500 Pts";
             // Referral Progress
-// === مکمل ریفرل لاجک (لیمنٹ 5 پر روکے گا، پوائنٹس نہیں دے گا) ===
-let displayRefs = Math.min(currentUser.referrals, 5); // 5 سے زیادہ نہیں دکھے گا
-const refProg = (displayRefs / 5) * 100;
-document.getElementById('ref-progress-bar').style.width = Math.min(refProg, 100) + '%';
-document.getElementById('ref-count-display').innerText = displayRefs + "/5";
-document.getElementById('ref-link-text').innerText = "earndost.pk/?ref=" + currentUser.refCode;
+function simulateReferral() {
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    // چیک کریں کہ لیمٹ 5 تو نہیں ہو گئی
+    if (currentUser.referrals >= 5) {
+        alert("⛔ آپ اپنی 5 ریفرلز کی لیمٹ پہلے ہی مکمل کر چکے ہیں! اب آپ مزید ریفرل نہیں کر سکتے۔");
+        return; // کوڈ یہاں رک جاتا ہے، کچھ نہیں ہوگا
+    }
+
+    // اگر لیمٹ 5 سے کم ہے تو ایڈ کھلے گا
+    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb1f8f1c48492c43', '_blank');
+
+    // 3 سیکنڈ بعد صرف ریفرلز کی گنتی بڑھے گی (پوائنٹس نہیں ملیں گے)
+    setTimeout(() => {
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        currentUser.referrals += 1;
+        // پوائنٹس والی لائن کو ہٹا دیا گیا ہے
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        if (typeof updateUI === 'function') updateUI();
+        alert(`🎉 مبارک ہو! ریفرلز کی گنتی بڑھ گئی! اب کل ریفرلز: ${currentUser.referrals}/5`);
+    }, 3000);
+}
             // Daily Bonus
             const now = Date.now();
             const btn = document.getElementById('daily-bonus-btn');
