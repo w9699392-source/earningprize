@@ -826,7 +826,7 @@ function handleReferralClick() {
                 menu.classList.add('active');
                 overlay.style.display = 'block';
             } else {
-                menu.classList.remove('active');
+                document.getElementById('ref-count-display').innerText = currentUser.referrals + "/5";
                 overlay.style.display = 'none';
             }
         }
