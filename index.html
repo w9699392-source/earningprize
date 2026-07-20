@@ -550,7 +550,7 @@
                 </div>
                 <p style="font-size: 0.75rem; color: #888; margin-top: 10px;">*5 Referrals required for withdrawal unlock.</p>
             </div>
-            <button onclick="simulateReferral()" class="btn-gold">[Demo] Simulate New Referral</button>
+             <button onclick="simulateReferral()" class="btn-gold">[Demo] Simulate New Referral</button>
         </div>
 
         <!-- OTHER PAGES -->
@@ -826,17 +826,25 @@
 function simulateReferral() {
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // چیک کریں کہ لیمٹ 5 تو نہیں ہو گئی
+    // 1. اگر لیمٹ 5 ہو چکی ہے تو میسج دے کر واپس جائیں
     if (currentUser.referrals >= 5) {
-        alert("⛔ آپ اپنی 5 ریفرلز کی لیمٹ پہلے ہی مکمل کر چکے ہیں! اب آپ مزید ریفرل نہیں کر سکتے۔");
-        return; // کوڈ یہاں رک جاتا ہے، کچھ نہیں ہوگا
+        alert("⛔ آپ اپنی 5 ریفرلز کی لیمٹ پہلے ہی مکمل کر چکے ہیں!");
+        return; // یہاں کوڈ رک جائے گا، کچھ نہیں ہوگا
     }
 
-    // اگر لیمٹ 5 سے کم ہے تو ایڈ کھلے گا
+    // 2. ایڈ کھولیں
     window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb1f8f1c48492c43', '_blank');
 
-    // 3 سیکنڈ بعد صرف ریفرلز کی گنتی بڑھے گی (پوائنٹس نہیں ملیں گے)
-   
+    // 3. پوائنٹس دیں اور ریفرل بڑھائیں
+    setTimeout(() => {
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        currentUser.referrals += 1;
+        currentUser.points += 25;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        if (typeof updateUI === 'function') updateUI();
+        alert(`🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے!`);
+    }, 3000);
+        }
             // Daily Bonus
             const now = Date.now();
             const btn = document.getElementById('daily-bonus-btn');
