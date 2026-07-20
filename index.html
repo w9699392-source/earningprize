@@ -916,16 +916,13 @@ function checkAndSimulateReferral() {
             }
 
             // Withdraw Logic
-        <a href="admin.html" target="_blank" style="color: #00C853; display: block; text-align: center; margin-top: 10px;">🛡️ ایڈمن پینل کھولیں</a>
+        
             const withdrawContent = document.getElementById('withdraw-content');
             const withdrawLocked = document.getElementById('withdraw-locked');
             if (currentUser.referrals >= 5) {
                 withdrawContent.classList.remove('hidden');
                 withdrawLocked.classList.add('hidden');
-             // WhatsApp کے ذریعے آپ کو اطلاع بھیجیں
-let myNumber = "923209446283"; // اپنا نمبر یہاں ڈالیں
-let msg = `🤑 نیا وڈرا کلیم!\nصارف: ${currentUser.name}\nبیلنس: ${currentUser.balance} روپے\nاکاؤنٹ: ${document.getElementById('wd-acc-num').value}`;
-window.open(`https://wa.me/${myNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+ 
                 document.getElementById('withdraw-balance-display').innerText = "Rs. " + currentUser.balance;
             } else {
                 withdrawContent.classList.add('hidden');
