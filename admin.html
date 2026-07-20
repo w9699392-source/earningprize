@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <style>
+        body { font-family: Arial; background: #f0f0f0; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #00C853; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ ایڈمن پینل - وڈرا درخواستیں</h1>
+    <div id="admin-data"></div>
+    <script>
+        function loadAdmin() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            let html = `<table><tr><th>صارف</th><th>رقم</th><th>اکاؤنٹ</th><th>اسٹیٹس</th></tr>`;
+            users.forEach(u => {
+                u.withdrawals.forEach(w => {
+                    html += `<tr><td>${u.name}</td><td>Rs. ${w.amount}</td><td>${w.accNum}</td><td style="color:${w.status==='Pending'?'red':'green'}">${w.status}</td></tr>`;
+                });
+            });
+            html += `</table>`;
+            document.getElementById('admin-data').innerHTML = html;
+        }
+        loadAdmin();
+    </script>
+</body>
+</html>
