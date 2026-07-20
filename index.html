@@ -823,7 +823,13 @@
             document.getElementById('box-progress-bar').style.width = progress + "%";
             document.getElementById('box-progress-text').innerText = (currentUser.points % 500) + "/500 Pts";
 function simulateReferral() {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+    // لوکل اسٹوریج سے ڈیٹا لیں۔ اگر لاگ ان نہیں ہے تو الرٹ دکھا کر روک دیں
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!currentUser) {
+        alert("🛑 براہ کرم پہلے اپنا اکاؤنٹ لاگ ان کریں!");
+        return;
+    }
     
     if (currentUser.referrals === undefined) currentUser.referrals = 0;
     if (currentUser.points === undefined) currentUser.points = 0;
@@ -842,7 +848,7 @@ function simulateReferral() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
     // 3. ایڈورٹائزمنٹ کی ونڈو کھولیں
-    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb3e36791ddb...', '_blank');
+    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb...', '_blank');
 
     // 4. اسکرین پر موجود ٹیکسٹ اور انٹرفیس کو فوراً اپڈیٹ کریں
     if (typeof updateUI === 'function') {
@@ -857,6 +863,7 @@ function simulateReferral() {
     // 5. کامیابی کا میسج
     alert('🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے ہیں');
         }
+        
     
 
             // Daily Bonus
