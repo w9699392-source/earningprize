@@ -822,49 +822,42 @@
             const progress = (currentUser.points % 500) / 500 * 100;
             document.getElementById('box-progress-bar').style.width = progress + "%";
             document.getElementById('box-progress-text').innerText = (currentUser.points % 500) + "/500 Pts";
-          function simulateReferral() {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-        function simulateReferral() {
-    // 1. لوکل اسٹوریج سے یوزر کا تازہ ترین ڈیٹا حاصل کریں
+function simulateReferral() {
     let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
     
-    // اگر ریفرلز کاؤنٹ موجود نہیں ہے تو اسے 0 سیٹ کریں
     if (currentUser.referrals === undefined) currentUser.referrals = 0;
     if (currentUser.points === undefined) currentUser.points = 0;
 
-    // 2. اگر لمٹ 5 یا اس سے زیادہ ہو چکی ہے تو فوراً روک دیں اور الرٹ دکھائیں
+    // 1. اگر لمٹ 5 یا اس سے زیادہ ہو چکی ہے تو آگے نہ بڑھیں
     if (currentUser.referrals >= 5) {
-        alert("🛑 آپ اپنی 5 ریفرلز کی لمٹ مکمل کر چکے ہیں! اب مزید پوائنٹس نہیں ملیں گے۔");
-        if (typeof updateUI === 'function') updateUI();
+        alert("🛑 آپ اپنی 5 ریفرلز کی لمٹ پہلے ہی مکمل کر چکے ہیں! اب مزید پوائنٹس نہیں ملیں گے۔");
         return; 
     }
 
-    // 3. اگر لمٹ ابھی پوری نہیں ہوئی (5 سے کم ہے) تو فوراً ڈیٹا اپڈیٹ کریں تاکہ دوبارہ کلک کرنے پر ہیک نہ ہو
+    // 2. اگر لمٹ 5 سے کم ہے تو ریفرل اور پوائنٹس بڑھائیں
     currentUser.referrals += 1;
     currentUser.points += 25;
     
     // لوکل اسٹوریج میں فوراً سیو کریں
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    // 4. اب ایڈورٹائزمنٹ ونڈو کھولیں
+    // 3. ایڈورٹائزمنٹ کی ونڈو کھولیں
     window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb3e36791ddb...', '_blank');
 
-    // 5. اسکرین پر موجود ٹیکسٹ اور انٹرفیس کو فوراً تبدیل کریں
+    // 4. اسکرین پر موجود ٹیکسٹ اور انٹرفیس کو فوراً اپڈیٹ کریں
     if (typeof updateUI === 'function') {
         updateUI();
     } else {
-        // اگر updateUI کام نہ کرے تو مینوئل تبدیل کریں
         const refDisplay = document.getElementById('ref-count-display');
         const pointsDisplay = document.getElementById('stat-points');
         if(refDisplay) refDisplay.innerText = currentUser.referrals + "/5";
         if(pointsDisplay) pointsDisplay.innerText = currentUser.points;
     }
 
-    // 6. آخر میں کامیابی کا میسج دکھائیں
-    alert('🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے ہیں (لمٹ: ' + currentUser.referrals + '/5)');
+    // 5. کامیابی کا میسج
+    alert('🎉 مبارک ہو! آپ کو 25 پوائنٹس مل گئے ہیں');
         }
-        
+    
 
             // Daily Bonus
             const now = Date.now();
