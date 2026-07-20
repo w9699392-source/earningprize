@@ -915,20 +915,26 @@ function checkAndSimulateReferral() {
                 openBtn.innerText = "Need 500 Pts";
             }
 
-            // Withdraw Logic
+// // Withdraw Logic
+const withdrawContent = document.getElementById('withdraw-content');
+const withdrawLocked = document.getElementById('withdraw-locked');
+
+// چیک کریں کہ یوزر کا بیلنس 100 روپے یا اس سے زیادہ ہے یا نہیں
+if (currentUser.balance >= 100) {
+    withdrawContent.classList.remove('hidden');
+    withdrawLocked.classList.add('hidden');
+    if(document.getElementById('withdraw-balance-display')) {
+        document.getElementById('withdraw-balance-display').innerText = "Rs. " + currentUser.balance;
+    }
+} else {
+    withdrawContent.classList.add('hidden');
+    withdrawLocked.classList.remove('hidden');
+    let needed = 100 - currentUser.balance;
+    if(document.getElementById('withdraw-lock-msg')) {
+        document.getElementById('withdraw-lock-msg').innerText = "آپ کو ودڈرا آپشن ان لاک کرنے کے لیے مزید " + needed + " روپے کمانے کی ضرورت ہے۔";
+    }
+        }
         
-            const withdrawContent = document.getElementById('withdraw-content');
-            const withdrawLocked = document.getElementById('withdraw-locked');
-            if (currentUser.referrals >= 5) {
-                withdrawContent.classList.remove('hidden');
-                withdrawLocked.classList.add('hidden');
- 
-                document.getElementById('withdraw-balance-display').innerText = "Rs. " + currentUser.balance;
-            } else {
-                withdrawContent.classList.add('hidden');
-                withdrawLocked.classList.remove('hidden');
-                document.getElementById('withdraw-lock-msg').innerText = "You need " + (5 - currentUser.referrals) + " more referrals to unlock.";
-            }
 
             renderTaskStates();
         }
@@ -1380,27 +1386,60 @@ function checkAndSimulateReferral() {
             }
         }
 
-        /* 
-        ========================================
-        WITHDRAWAL SYSTEM
-        ========================================
-        */
-        function processWithdrawal() {
-            const method = document.getElementById('wd-method').value;
-            const accNum = document.getElementById('wd-acc-num').value;
-            const accName = document.getElementById('wd-acc-name').value;
-            const amount = parseInt(document.getElementById('wd-amount').value);
+       function processWithdrawal() {
+    const method = document.getElementById('wd-method').value;
+    const accNum = document.getElementById('wd-acc-num').value.trim();
+    const accName = document.getElementById('wd-acc-name').value.trim();
+    const amount = parseInt(document.getElementById('wd-amount').value.trim());
 
-            if (!accNum || !accName || !amount) return alert("Please fill all fields.");
-            if (amount < 100) return alert("Minimum withdrawal is Rs. 100.");
-            if (amount > currentUser.balance) return alert("Insufficient balance.");
+    if (!accNum || !accName || !amount) {
+        return alert("Please fill all fields.");
+    }
+    if (amount < 100) {
+        return alert("Minimum withdrawal is Rs. 100.");
+    }
+    if (amount > currentUser.balance) {
+        return alert("Insufficient balance.");
+    }
 
-            currentUser.balance -= amount;
-            const trans = {
-                id: 'PPB' + Date.now().toString().slice(-6),
-                method, accNum, amount, date: new Date().toLocaleDateString(), status: 'Pending'
-            };
-            currentUser.withdrawals.unshift(trans);
+    // 1. اپنا واٹس ایپ نمبر یہاں ڈالیں (بغیر پلس سائن کے)
+    const adminWhatsApp = "923XXXXXXXXX"; 
+
+    // 2. واٹس ایپ کے لیے اردو میسج بنائیں
+    const msgText = `📢 *نئی ودڈرا ریکوئسٹ (Pakistan Prize Box)*\n\n` +
+                    `👤 *صارف کا نام:* ${accName}\n` +
+                    `📱 *اکاؤنٹ نمبر:* ${accNum}\n` +
+                    `💳 *طریقہ کار:* ${method}\n` +
+                    `💰 *رقم:* ${amount} Rs\n` +
+                    `📊 *باقی بیلنس:* ${currentUser.balance - amount} Rs\n\n` +
+                    `💬 _براہ کرم میرا بیلنس چیک کر کے مجھے پیمنٹ سینڈ کر دیں۔ شکریہ!_`;
+
+    // 3. یوزر کے اکاؤنٹ سے بیلنس کاٹ لیں تاکہ وہ بار بار کلک نہ کر سکے
+    currentUser.balance -= amount;
+    
+    // پوائنٹس کو بھی اسی حساب سے کم کر دیں (اگر 100 روپے = 1000 پوائنٹس ہیں)
+    if(currentUser.points !== undefined) {
+        currentUser.points = currentUser.balance * 10;
+    }
+
+    // ٹرانزیکشن ہسٹری ریکارڈ کریں
+    const trans = {
+        id: 'PPB' + Date.now().toString().slice(-6),
+        method, accNum, amount, date: new Date().toLocaleDateString(), status: 'Pending'
+    };
+    currentUser.withdrawals.unshift(trans);
+
+    // سیو اور انٹرفیس اپڈیٹ
+    saveUsers();
+    updateUI();
+    renderWithdrawalHistory();
+
+    alert("🎉 آپ کا فارم تیار ہے! اوکے (OK) پر کلک کرتے ہی آپ کے موبائل کا واٹس ایپ کھلے گا، وہاں سے یہ میسج ایڈمن کو سینڈ کر دیں۔");
+
+    // 4. واٹس ایپ پر بھیجیں
+    window.open(`https://api.whatsapp.com/send?phone=${adminWhatsApp}&text=${encodeURIComponent(msgText)}`, '_blank');
+                    }
+        
             
             saveUsers();
             updateUI();
