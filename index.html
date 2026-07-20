@@ -550,7 +550,15 @@
                 </div>
                 <p style="font-size: 0.75rem; color: #888; margin-top: 10px;">*5 Referrals required for withdrawal unlock.</p>
             </div>
-              <button onclick="checkAndSimulateReferral()" class="btn-gold">[Demo] Simulate New Referral</button>
+              <button onclick="
+    let user = JSON.parse(localStorage.getItem('currentUser')) || {};
+    if ((user.referrals || 0) >= 5) {
+        alert('🛑 آپ اپنی 5 ریفرلز کی لمٹ مکمل کر چکے ہیں! اب مزید پوائنٹس نہیں ملیں گے۔');
+    } else {
+        simulateReferral();
+    }
+" class="btn-gold">[Demo] Simulate New Referral</button>
+            
             
         </div>
 
