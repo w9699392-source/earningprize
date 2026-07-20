@@ -550,7 +550,7 @@
                 </div>
                 <p style="font-size: 0.75rem; color: #888; margin-top: 10px;">*5 Referrals required for withdrawal unlock.</p>
             </div>
-              <button onclick="window.open('');
+              <button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43','_blank');
     let user = JSON.parse(localStorage.getItem('currentUser')) || {};
     if ((user.referrals || 0) >= 5) {
         alert('🛑 آپ اپنی 5 ریفرلز کی لمٹ مکمل کر چکے ہیں! اب مزید پوائنٹس نہیں ملیں گے۔');
@@ -1386,7 +1386,7 @@ function checkAndSimulateReferral() {
         WITHDRAWAL SYSTEM
         ========================================
         */
-        function processWithdrawal() {
+    function processWithdrawal() {
     const method = document.getElementById('wd-method').value;
     const accNum = document.getElementById('wd-acc-num').value;
     const accName = document.getElementById('wd-acc-name').value;
@@ -1408,27 +1408,28 @@ function checkAndSimulateReferral() {
     renderWithdrawalHistory();
 
     // ==========================================
-    // 👇 یہ WhatsApp کا کوڈ ہے (آپ کا نمبر کوڈ میں محفوظ ہے)
+    // 👇 WhatsApp میسج (آپ کو اطلاع ملے گی)
     // ==========================================
-    // آپ کا نمبر یہاں محفوظ ہے۔ صارف اسے نہیں دیکھ سکتا
-    const adminNumber = "923209446283"; 
-
-    // صارف کو بھیجے جانے والے پیغام میں آپ کا نمبر نظر نہیں آئے گا
-    const message = 
-        `🤑 *نیا وڈرا کلیم!*\n\n` +
-        `👤 صارف: ${currentUser.name}\n` +
-        `💰 رقم: ${amount} PKR\n` +
-        `🏦 اکاؤنٹ: ${accNum} (${method})\n` +
-        `🆔 ریف آئی ڈی: ${trans.id}`;
-
-    // یہ لنک صارف کے فون پر WhatsApp کھولے گا، لیکن اسے نمبر نہیں دکھائے گا
-    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    const adminNumber = "923209446283"; // اپنا نمبر یہاں ڈالیں
+    const adminMsg = 
+        `🤑 نیا وڈرا کلیم!\n` +
+        `صارف: ${currentUser.name}\n` +
+        `رقم: ${amount} PKR\n` +
+        `اکاؤنٹ: ${accNum} (${method})`;
+        
+    window.open(`https://api.whatsapp.com/send?phone=${adminNumber}&text=${encodeURIComponent(adminMsg)}`, '_blank');
     // ==========================================
-    // 👆 WhatsApp کوڈ یہاں ختم ہوتا ہے
+    // 👆 WhatsApp میسج یہاں ختم ہوتا ہے
     // ==========================================
 
+    // ==========================================
+    // 👇 صارف کو ملنے والا میسج (3-7 دن)
+    // ==========================================
     alert(`Withdrawal Requested! Ref ID: ${trans.id}. Please wait 3-7 days.`);
-        }
+    // ==========================================
+    // 👆 صارف کا میسج یہاں ختم ہوتا ہے
+    // ==========================================
+        }  
         function renderWithdrawalHistory() {
             const container = document.getElementById('wd-history');
             if (currentUser.withdrawals.length === 0) {
