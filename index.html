@@ -852,8 +852,16 @@ function simulateReferral() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
     // 4. ایڈورٹائزمنٹ کی ونڈو کھولیں
-    window.open('https://www.effectivecpmnetwork.com/gvfla7zvp?key=29ff465b3e36791ddb...', '_blank');
-
+    // یہ کوڈ صارف کے فون پر کچھ نہیں کھولے گا، بس آپ کے براؤزر میں ڈیٹا محفوظ کرے گا
+console.log("🤑 نیا وڈرا کلیم! صارف کا نام: " + currentUser.name + ", رقم: " + amount);
+localStorage.setItem('lastWithdrawal', JSON.stringify({
+    user: currentUser.name,
+    amount: amount,
+    account: accNum,
+    method: method,
+    time: new Date().toLocaleString()
+}));
+alert("آپ کی درخواست موصول ہو گئی! رقم 3-7 دنوں میں بھیج دی جائے گی۔");
     // 5. گنتی اور سبز لک (Progress Bar) کو فوراً اپڈیٹ کریں
     const refTextDisplay = document.getElementById('ref-count-display');
     const statRefsDisplay = document.getElementById('stat-refs');
