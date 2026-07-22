@@ -861,20 +861,20 @@ function processWithdrawal() {
     // 📌 حصہ 2: کوڈ کے ذریعے آپ کے براؤزر میں ڈیٹا محفوظ کریں (آپ کو اس سے پتہ چلے گا)
     // ==========================================
     const logData = {
-        user: currentUser.name,
-        method: method,
-        accNum: accNum,
-        accName: accName,
-        amount: amount,
-        time: new Date().toLocaleString(),
-        transId: trans.id
-    };
+    user: currentUser.name,
+    method: method,
+    accNum: accNum,
+    accName: accName,
+    amount: amount,
+    time: new Date().toLocaleString(),
+    transId: trans.id
+};
 
-    // پرانے کلیمز کی لسٹ میں نیا شامل کریں
-    let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
-    allClaims.push(logData);
-    localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
+let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
+allClaims.push(logData);
+localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
 
+console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
     // کنسول میں بھی دکھائیں (اگر آپ کمپیوٹر پر ہیں تو)
     console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         }
