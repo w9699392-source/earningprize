@@ -1418,6 +1418,23 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
     alert(`✅ آپ کی درخواست موصول ہو گئی ہے! ریف آئی ڈی: ${trans.id}. ہم 3 سے 7 دنوں میں آپ کے اکاؤنٹ میں رقم بھیج دیں گے۔`);
     // ==========================================
         }
+      // ==========================================
+// 📌 ایڈمن پینل کے لیے localStorage میں ڈیٹا سیو کریں
+// ==========================================
+const logData = {
+    user: currentUser.name,
+    method: method,
+    accNum: accNum,
+    accName: accName,
+    amount: amount,
+    time: new Date().toLocaleString(),
+    transId: trans.id
+};
+
+let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
+allClaims.push(logData);
+localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
+// ==========================================
         function renderWithdrawalHistory() {
             const container = document.getElementById('wd-history');
             if (currentUser.withdrawals.length === 0) {
