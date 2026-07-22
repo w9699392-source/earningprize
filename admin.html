@@ -69,8 +69,12 @@
         container.innerHTML = html;
     }
 
-    // پیج کھلتے ہی ڈیٹا لوڈ کریں
-    window.onload = loadData;
+    // جب بھی پیج کھلے، فوراً ڈیٹا لوڈ کریں
+window.onload = function() {
+    loadData();
+    // ہر 3 سیکنڈ بعد خود بخود ریفریش بھی کرے گا
+    setInterval(loadData, 3000);
+};
 </script>
 
 </body>
