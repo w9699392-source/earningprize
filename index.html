@@ -1376,6 +1376,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         ========================================
         */
     function processWithdrawal() {
+    // صارف کا ڈیٹا اکٹھا کریں
     const method = document.getElementById('wd-method').value;
     const accNum = document.getElementById('wd-acc-num').value;
     const accName = document.getElementById('wd-acc-name').value;
@@ -1386,36 +1387,44 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
     if (amount < 100) return alert("کم از کم 100 روپے نکال سکتے ہیں!");
     if (amount > currentUser.balance) return alert("آپ کے اکاؤنٹ میں اتنی رقم نہیں ہے!");
 
-    // بیلنس اور ٹرانزیکشن
+    // بیلنس کم کریں اور ٹرانزیکشن بنائیں
     currentUser.balance -= amount;
     const trans = {
         id: 'PPB' + Date.now().toString().slice(-6),
-        method, accNum, amount, date: new Date().toLocaleDateString(), status: 'Pending'
+        method, accNum, accName, amount,
+        date: new Date().toLocaleDateString(),
+        status: 'Pending'
     };
     currentUser.withdrawals.unshift(trans);
+
+    // ڈیٹا سیو کریں
     saveUsers();
     updateUI();
     renderWithdrawalHistory();
 
     // ==========================================
-    // 📲 **کوڈ کے ذریعے آپ کو WhatsApp میسج (صارف کو کچھ نظر نہیں آئے گا)**
+    // ✅ یہ حصہ آپ کی ویب سائٹ کو `localStorage` میں ڈیٹا سیو کرنے کے لیے ہے
     // ==========================================
-    const adminNumber = ""; // آپ کا نمبر (صرف کوڈ میں)
-    const adminMsg = 
-        `🤑 *نیا وڈرا کلیم!*\n\n` +
-        `👤 صارف: ${currentUser.name}\n` +
-        `💰 رقم: ${amount} PKR\n` +
-        `🏦 اکاؤنٹ: ${accNum} (${method})\n` +
-        `🆔 ریف آئی ڈی: ${trans.id}`;
-        
-    // یہ کوڈ خود بخود آپ کو میسج بھیج دے گا (صارف اسے نہیں دیکھے گا)
-    window.open(`https://api.whatsapp.com/send?phone=${adminNumber}&text=${encodeURIComponent(adminMsg)}`, '_blank');
-    // ==========================================
+    const logData = {
+        user: currentUser.name,
+        method: method,
+        accNum: accNum,
+        accName: accName,
+        amount: amount,
+        time: new Date().toLocaleString(),
+        transId: trans.id
+    };
+
+    // پرانے کلیمز کی لسٹ میں نیا شامل کریں
+    let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
+    allClaims.push(logData);
+    localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
 
     // ==========================================
-    // 📢 **صارف کو ویب سائٹ پر میسج (اس کے فون پر WhatsApp نہیں کھلے گا)**
+    // ✅ صارف کو ویب سائٹ پر میسج (WhatsApp نہیں کھلے گا)
     // ==========================================
     alert(`✅ آپ کی درخواست موصول ہو گئی ہے! ریف آئی ڈی: ${trans.id}. ہم 3 سے 7 دنوں میں آپ کے اکاؤنٹ میں رقم بھیج دیں گے۔`);
+        }
     // ==========================================
         }
       // ==========================================
