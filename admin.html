@@ -1,143 +1,90 @@
-<!DOCTYPE html>
-<html lang="ur">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - وڈرا کلیمز</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f4f9; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #00C853; margin-bottom: 20px; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th { background: #00C853; color: white; padding: 12px; text-align: center; }
-        td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
-        .empty-msg { text-align: center; color: #888; padding: 30px; font-size: 16px; }
-        .refresh-btn { display: block; width: 100%; padding: 12px; background: #0A0A0A; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-bottom: 20px; }
-        .refresh-btn:active { transform: scale(0.97); }
-    </style>
-</head>
-<body>
+<!-- =================================================== -->
+<!-- 🛡️ ایڈمن پینل - مکمل لائیو ورژن (صرف آپ کے لیے) -->
+<!-- =================================================== -->
 
-<div class="container">
-    <h1>🛡️ ایڈمن پینل - وڈرا کلیمز</h1>
-    <button class="refresh-btn" onclick="loadData()">🔄 ڈیٹا ریفریش کریں</button>
-    <div id="data-table"></div>
-</div>
-
-<script>
-    function loadData() {
-        // براؤزر کی میموری سے ڈیٹا نکالیں
-        const claims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
-        const container = document.getElementById('data-table');
-
-        if (claims.length === 0) {
-            container.innerHTML = `<div class="empty-msg">ابھی تک کوئی وڈرا کلیم نہیں ہوا۔</div>`;
-            return;
-        }
-
-        // ٹیبل بنائیں
-        let html = `<table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>صارف کا نام</th>
-                    <th>اکاؤنٹ نمبر</th>
-                    <th>طریقہ (JazzCash/EasyPaisa)</th>
-                    <th>رقم (PKR)</th>
-                    <th>تاریخ و وقت</th>
-                </tr>
-            </thead>
-            <tbody>
-        `;
-
-        // صارفین کی لسٹ (نئے سے پرانے کی طرف)
-        claims.slice().reverse().forEach((c, index) => {
-            html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td><strong>${c.user}</strong></td>
-                    <td>${c.accNum}</td>
-                    <td>${c.method}</td>
-                    <td style="color: #00C853; font-weight: bold;">${c.amount} روپے</td>
-                    <td>${c.time}</td>
-                </tr>
-            `;
-        });
-
-        html += `</tbody></table>`;
-        container.innerHTML = html;
-    }
-// یہ لائن اس بات کو یقینی بنائے گی کہ ڈیٹا فوراً ظاہر ہو
-console.log("Admin Panel Loaded. Data found:", claims);
-    // جب بھی پیج کھلے، فوراً ڈیٹا لوڈ کریں
-window.onload = function() {
-    loadData();
-    // ہر 3 سیکنڈ بعد خود بخود ریفریش بھی کرے گا
-    setInterval(loadData, 3000);
-
-};
-</script>
-
-</body>
-<!-- ========================================== -->
-<!-- 🛡️ ایڈمن پینل (صرف آپ کے لیے - لائیو ورژن) -->
-<!-- ========================================== -->
-<div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; padding: 20px; overflow-y: auto; color: white;">
+<!-- ایڈمن پینل کا HTML ڈیزائن (چھپا ہوا) -->
+<div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 9999; padding: 20px; overflow-y: auto; color: white;">
     <div style="text-align: right; margin-bottom: 15px;">
-        <button onclick="document.getElementById('admin-overlay').style.display='none'" style="background: red; color: white; border: none; padding: 10px 20px; border-radius: 5px;">بند کریں (X)</button>
+        <button onclick="document.getElementById('admin-overlay').style.display = 'none';" 
+                style="background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            ❌ بند کریں (Close)
+        </button>
     </div>
-    <h2 style="color: #00C853; text-align: center; margin-bottom: 20px;">📋 وڈرا کلیمز کی لسٹ</h2>
-    <div id="admin-live-list"></div>
+    
+    <h2 style="color: #00C853; text-align: center; margin-bottom: 20px; font-size: 22px;">
+        📋 وڈرا کلیمز کی مکمل لسٹ (Admin Panel)
+    </h2>
+    
+    <!-- یہاں ڈیٹا دکھائے گا -->
+    <div id="admin-live-list" style="background: #111; padding: 15px; border-radius: 10px; min-height: 200px;"></div>
 </div>
 
-<!-- ========================================== -->
-<!-- 🟢 اسکرپٹ: لائیو ایڈمن پینل کا لاجک -->
-<!-- ========================================== -->
+<!-- ایڈمن پینل کا JavaScript لاجک -->
 <script>
+    // === یہ فنکشن ایڈمن پینل کو کھولے گا ===
     function showLiveAdmin() {
         const overlay = document.getElementById('admin-overlay');
-        overlay.style.display = 'block';
-        renderLiveClaims();
-        setInterval(renderLiveClaims, 2000); // ہر 2 سیکنڈ بعد خود بخود ریفریش
+        if (overlay) {
+            overlay.style.display = 'block';
+            renderLiveClaims();
+            // ہر 3 سیکنڈ بعد خود بخود ریفریش کرے گا
+            if (window.adminInterval) clearInterval(window.adminInterval);
+            window.adminInterval = setInterval(renderLiveClaims, 3000);
+        } else {
+            console.error("غلطی: admin-overlay نہیں ملا! براہ کرم یقینی بنائیں کہ HTML کوڈ موجود ہے۔");
+        }
     }
 
+    // === یہ فنکشن ڈیٹا کو پڑھ کر ٹیبل بنائے گا ===
     function renderLiveClaims() {
         const container = document.getElementById('admin-live-list');
+        if (!container) return;
+
+        // براؤزر کی میموری سے ڈیٹا نکالیں
         const claims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
 
         if (claims.length === 0) {
-            container.innerHTML = `<div style="text-align: center; color: #888; padding: 30px;">ابھی تک کوئی وڈرا کلیم نہیں ہوا۔</div>`;
+            container.innerHTML = `
+                <div style="text-align: center; color: #888; padding: 40px;">
+                    <span style="font-size: 50px; display: block;">📭</span>
+                    ابھی تک کوئی وڈرا کلیم نہیں ہوا۔
+                </div>
+            `;
             return;
         }
 
-        let html = `<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <tr style="background: #00C853; color: black;">
-                <th style="padding: 10px;">#</th>
-                <th style="padding: 10px;">صارف</th>
-                <th style="padding: 10px;">اکاؤنٹ</th>
-                <th style="padding: 10px;">طریقہ</th>
-                <th style="padding: 10px;">رقم</th>
-                <th style="padding: 10px;">وقت</th>
-            </tr>`;
+        // خوبصورت ٹیبل بنائیں (نئے سے پرانے تک)
+        let html = `
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <tr style="background: #00C853; color: black; text-align: left;">
+                    <th style="padding: 12px;">#</th>
+                    <th style="padding: 12px;">صارف کا نام</th>
+                    <th style="padding: 12px;">اکاؤنٹ نمبر</th>
+                    <th style="padding: 12px;">طریقہ (JazzCash/EasyP)</th>
+                    <th style="padding: 12px;">رقم (PKR)</th>
+                    <th style="padding: 12px;">تاریخ و وقت</th>
+                </tr>
+        `;
 
-        claims.slice().reverse().forEach((c, i) => {
-            html += `<tr style="border-bottom: 1px solid #333;">
-                <td style="padding: 10px;">${i+1}</td>
-                <td style="padding: 10px; color: #00C853; font-weight: bold;">${c.user}</td>
-                <td style="padding: 10px;">${c.accNum}</td>
-                <td style="padding: 10px;">${c.method}</td>
-                <td style="padding: 10px; color: #F0B90B; font-weight: bold;">Rs. ${c.amount}</td>
-                <td style="padding: 10px; font-size: 0.8rem;">${c.time}</td>
-            </tr>`;
+        claims.slice().reverse().forEach((c, index) => {
+            html += `
+                <tr style="border-bottom: 1px solid #333;">
+                    <td style="padding: 12px; text-align: center;">${index + 1}</td>
+                    <td style="padding: 12px; color: #00C853; font-weight: bold;">${c.user || 'نامعلوم'}</td>
+                    <td style="padding: 12px;">${c.accNum || 'نہیں'}</td>
+                    <td style="padding: 12px;">${c.method || 'نہیں'}</td>
+                    <td style="padding: 12px; color: #F0B90B; font-weight: bold;">Rs. ${c.amount || 0}</td>
+                    <td style="padding: 12px; font-size: 0.8rem;">${c.time || 'نامعلوم'}</td>
+                </tr>
+            `;
         });
 
         html += `</table>`;
         container.innerHTML = html;
     }
 
-    // 👇 اسے ٹیسٹ کرنے کے لیے کنسول میں یہ ٹائپ کریں: showLiveAdmin()
-    console.log("🛡️ ایڈمن پینل تیار ہے! ٹیسٹ کے لیے کنسول میں showLiveAdmin() ٹائپ کریں۔");
+    // === لاگ ان ہونے پر کنسول میں ہدایت دکھائیں ===
+    console.log("🛡️ ایڈمن پینل کامیابی سے لوڈ ہو گیا ہے!");
+    console.log("👉 اسے کھولنے کے لیے کنسول میں یہ ٹائپ کریں اور Enter دبائیں:");
+    console.log("%cshowLiveAdmin()", "color: #00C853; font-weight: bold; font-size: 16px;");
 </script>
-    
-</html>
