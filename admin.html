@@ -1,90 +1,63 @@
-<!-- =================================================== -->
-<!-- 🛡️ ایڈمن پینل - مکمل لائیو ورژن (صرف آپ کے لیے) -->
-<!-- =================================================== -->
-
-<!-- ایڈمن پینل کا HTML ڈیزائن (چھپا ہوا) -->
-<div id="admin-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 9999; padding: 20px; overflow-y: auto; color: white;">
-    <div style="text-align: right; margin-bottom: 15px;">
-        <button onclick="document.getElementById('admin-overlay').style.display = 'none';" 
-                style="background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-            ❌ بند کریں (Close)
-        </button>
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - وڈرا کلیمز</title>
+    <style>
+        body { background: #0A0A0A; color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #1A1A1A; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        h1 { color: #00C853; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #00C853; color: black; padding: 10px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #333; }
+        .btn-refresh { width: 100%; padding: 12px; background: #F0B90B; color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .empty { text-align: center; color: #888; padding: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ ایڈمن پینل - وڈرا کلیمز</h1>
+        <button class="btn-refresh" onclick="loadData()">🔄 ڈیٹا ریفریش کریں</button>
+        <div id="data-table" style="margin-top: 15px;"></div>
     </div>
-    
-    <h2 style="color: #00C853; text-align: center; margin-bottom: 20px; font-size: 22px;">
-        📋 وڈرا کلیمز کی مکمل لسٹ (Admin Panel)
-    </h2>
-    
-    <!-- یہاں ڈیٹا دکھائے گا -->
-    <div id="admin-live-list" style="background: #111; padding: 15px; border-radius: 10px; min-height: 200px;"></div>
-</div>
+    <script>
+        function loadData() {
+            const claims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
+            const container = document.getElementById('data-table');
 
-<!-- ایڈمن پینل کا JavaScript لاجک -->
-<script>
-    // === یہ فنکشن ایڈمن پینل کو کھولے گا ===
-    function showLiveAdmin() {
-        const overlay = document.getElementById('admin-overlay');
-        if (overlay) {
-            overlay.style.display = 'block';
-            renderLiveClaims();
-            // ہر 3 سیکنڈ بعد خود بخود ریفریش کرے گا
-            if (window.adminInterval) clearInterval(window.adminInterval);
-            window.adminInterval = setInterval(renderLiveClaims, 3000);
-        } else {
-            console.error("غلطی: admin-overlay نہیں ملا! براہ کرم یقینی بنائیں کہ HTML کوڈ موجود ہے۔");
-        }
-    }
+            if (claims.length === 0) {
+                container.innerHTML = `<div class="empty">ابھی تک کوئی وڈرا کلیم نہیں ہوا۔</div>`;
+                return;
+            }
 
-    // === یہ فنکشن ڈیٹا کو پڑھ کر ٹیبل بنائے گا ===
-    function renderLiveClaims() {
-        const container = document.getElementById('admin-live-list');
-        if (!container) return;
-
-        // براؤزر کی میموری سے ڈیٹا نکالیں
-        const claims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
-
-        if (claims.length === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; color: #888; padding: 40px;">
-                    <span style="font-size: 50px; display: block;">📭</span>
-                    ابھی تک کوئی وڈرا کلیم نہیں ہوا۔
-                </div>
+            let html = `
+                <table>
+                    <tr>
+                        <th>#</th>
+                        <th>صارف</th>
+                        <th>اکاؤنٹ</th>
+                        <th>طریقہ</th>
+                        <th>رقم</th>
+                        <th>وقت</th>
+                    </tr>
             `;
-            return;
+            claims.slice().reverse().forEach((c, i) => {
+                html += `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td style="color: #00C853;">${c.user}</td>
+                        <td>${c.accNum}</td>
+                        <td>${c.method}</td>
+                        <td style="color: #F0B90B;">Rs. ${c.amount}</td>
+                        <td style="font-size: 0.8rem;">${c.time}</td>
+                    </tr>
+                `;
+            });
+            html += `</table>`;
+            container.innerHTML = html;
         }
-
-        // خوبصورت ٹیبل بنائیں (نئے سے پرانے تک)
-        let html = `
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <tr style="background: #00C853; color: black; text-align: left;">
-                    <th style="padding: 12px;">#</th>
-                    <th style="padding: 12px;">صارف کا نام</th>
-                    <th style="padding: 12px;">اکاؤنٹ نمبر</th>
-                    <th style="padding: 12px;">طریقہ (JazzCash/EasyP)</th>
-                    <th style="padding: 12px;">رقم (PKR)</th>
-                    <th style="padding: 12px;">تاریخ و وقت</th>
-                </tr>
-        `;
-
-        claims.slice().reverse().forEach((c, index) => {
-            html += `
-                <tr style="border-bottom: 1px solid #333;">
-                    <td style="padding: 12px; text-align: center;">${index + 1}</td>
-                    <td style="padding: 12px; color: #00C853; font-weight: bold;">${c.user || 'نامعلوم'}</td>
-                    <td style="padding: 12px;">${c.accNum || 'نہیں'}</td>
-                    <td style="padding: 12px;">${c.method || 'نہیں'}</td>
-                    <td style="padding: 12px; color: #F0B90B; font-weight: bold;">Rs. ${c.amount || 0}</td>
-                    <td style="padding: 12px; font-size: 0.8rem;">${c.time || 'نامعلوم'}</td>
-                </tr>
-            `;
-        });
-
-        html += `</table>`;
-        container.innerHTML = html;
-    }
-
-    // === لاگ ان ہونے پر کنسول میں ہدایت دکھائیں ===
-    console.log("🛡️ ایڈمن پینل کامیابی سے لوڈ ہو گیا ہے!");
-    console.log("👉 اسے کھولنے کے لیے کنسول میں یہ ٹائپ کریں اور Enter دبائیں:");
-    console.log("%cshowLiveAdmin()", "color: #00C853; font-weight: bold; font-size: 16px;");
-</script>
+        window.onload = loadData;
+    </script>
+</body>
+</html>
