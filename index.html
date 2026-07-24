@@ -1399,23 +1399,43 @@ function processWithdrawal() {
     renderWithdrawalHistory();
 
     // ============================================================
-    // 🟢 یہ حصہ آپ کے WhatsApp پر بغیر نمبر دکھائے میسج بھیجے گا
+    // 📲 حصہ 1: WhatsApp پر میسج (صارف کو نمبر نہیں دکھے گا)
     // ============================================================
-    const adminNumber = "923209446283"; // یہاں اپنا نمبر 92 کے ساتھ لکھیں
+    const adminNumber = "923209446283"; // اپنا نمبر یہاں ڈالیں
     const adminMsg = 
         `🤑 *نیا وڈرا کلیم!*\n\n` +
-        `👤 صارف کا نام: ${currentUser.name}\n` +
+        `👤 صارف: ${currentUser.name}\n` +
         `💰 رقم: ${amount} PKR\n` +
-        `🏦 اکاؤنٹ نمبر: ${accNum}\n` +
-        `🏧 طریقہ: ${method}\n` +
+        `🏦 اکاؤنٹ: ${accNum} (${method})\n` +
         `🆔 ریف آئی ڈی: ${trans.id}`;
-
-    // یہ لنک خود بخود میسج بھیج دے گا، لیکن صارف اسے نہیں دیکھے گا
     window.open(`https://api.whatsapp.com/send?phone=${adminNumber}&text=${encodeURIComponent(adminMsg)}`, '_blank');
     // ============================================================
 
+    // ============================================================
+    // 📖 حصہ 2: "کنٹرولنگ بک" (Admin Log) میں ڈیٹا محفوظ کریں
+    // ============================================================
+    const logData = {
+        user: currentUser.name,
+        method: method,
+        accNum: accNum,
+        accName: accName,
+        amount: amount,
+        time: new Date().toLocaleString(),
+        transId: trans.id
+    };
+
+    let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
+    allClaims.push(logData);
+    localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
+    console.log("📖 کنٹرول بک میں نیا اندراج:", logData);
+    // ============================================================
+
+    // ============================================================
+    // 📢 حصہ 3: صارف کو ویب سائٹ پر میسج (اس کے فون پر کچھ نہیں کھلے گا)
+    // ============================================================
     alert(`✅ آپ کی درخواست موصول ہو گئی ہے! ریف آئی ڈی: ${trans.id}. ہم 3 سے 7 دنوں میں آپ کے اکاؤنٹ میں رقم بھیج دیں گے۔`);
-                                                       }
+    // ============================================================
+        }
         /* 
         ========================================
         MISC UI RENDERING
