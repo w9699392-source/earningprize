@@ -1375,43 +1375,17 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         WITHDRAWAL SYSTEM
         ========================================
         */
-// ==========================================================
-// 1. WITHDRAW VISIBILITY LOGIC (یہاں سے شروع کریں)
-// ==========================================================
-function updateWithdrawDisplay() {
-    const withdrawContent = document.getElementById('withdraw-content');
-    const withdrawLocked = document.getElementById('withdraw-locked');
-    
-    if (!currentUser) return;
+ // JSONBin API Config
+const JSONBIN_BIN_ID = "6a62c4f6da38895dfe87b1f4";
+const JSONBIN_API_KEY = "$2a$10$ZQJID0JvvD95Sv/cn7Wbq.L6TjwGH.pA7QnOE8qweX1D0paGtdZgq";
 
-    // اگر یوزر کا بیلنس 100 روپے یا اس سے زیادہ ہے
-    if (currentUser.balance >= 100) {
-        if(withdrawContent) withdrawContent.classList.remove('hidden');
-        if(withdrawLocked) withdrawLocked.classList.add('hidden');
-        if(document.getElementById('withdraw-balance-display')) {
-            document.getElementById('withdraw-balance-display').innerText = "Rs. " + currentUser.balance;
-        }
-    } else {
-        // اگر بیلنس 100 سے کم ہے تو فارم چھپا دیں
-        if(withdrawContent) withdrawContent.classList.add('hidden');
-        if(withdrawLocked) withdrawLocked.classList.remove('hidden');
-        let needed = 100 - (currentUser.balance || 0);
-        if(document.getElementById('withdraw-lock-msg')) {
-            document.getElementById('withdraw-lock-msg').innerText = "آپ کو ودڈرا آپشن ان لاک کرنے کے لیے مزید " + needed + " روپے کمانے کی ضرورت ہے۔";
-        }
-    }
-}
-
-// ==========================================================
-// 2. PROCESS WITHDRAWAL FUNCTION
-// ==========================================================
-function processWithdrawal() {
+async function processWithdrawal() {
     const methodEl = document.getElementById('wd-method');
     const accNumEl = document.getElementById('wd-acc-num');
     const accNameEl = document.getElementById('wd-acc-name');
     const amountEl = document.getElementById('wd-amount');
 
-    if(!methodEl || !accNumEl || !accNameEl || !amountEl) {
+    if (!methodEl || !accNumEl || !accNameEl || !amountEl) {
         return alert("Form elements missing. Please check HTML IDs.");
     }
 
@@ -1421,80 +1395,63 @@ function processWithdrawal() {
     const amount = parseInt(amountEl.value.trim());
 
     if (!accNum || !accName || !amount) {
-        return alert("Please fill all fields.");
+        return alert("براہ کرم تمام خانے پُر کریں!");
     }
     if (amount < 100) {
-        return alert("Minimum withdrawal is Rs. 100.");
+        return alert("کم از کم ودڈرا 100 روپے ہے!");
     }
     if (amount > currentUser.balance) {
-        return alert("Insufficient balance.");
+        return alert("آپ کے پاس اتنی رقم موجود نہیں ہے۔");
     }
 
-    // اپنا واٹس ایپ نمبر یہاں ڈالیں (بغیر پلس سائن کے)
-    const adminWhatsApp = "923XXXXXXXXX"; 
-
-    // واٹس ایپ کے لیے خوبصورت اردو میسج
-    const msgText = `📢 *نئی ودڈرا ریکوئسٹ (Pakistan Prize Box)*\n\n` +
-                    `👤 *صارف کا نام:* ${accName}\n` +
-                    `📱 *اکاؤنٹ نمبر:* ${accNum}\n` +
-                    `💳 *طریقہ کار:* ${method}\n` +
-                    `💰 *رقم:* ${amount} Rs\n` +
-                    `📊 *باقی بیلنس:* ${currentUser.balance - amount} Rs\n\n` +
-                    `💬 _براہ کرم میرا بیلنس چیک کر کے مجھے پیمنٹ سینڈ کر دیں۔ شکریہ!_`;
-
-    // اکاؤنٹ سے بیلنس کاٹیں
-    currentUser.balance -= amount;
-    if(currentUser.points !== undefined) {
-        currentUser.points = currentUser.balance * 10;
-    }
-
-    // ہسٹری میں شامل کریں
-    const trans = {
-        id: 'PPB' + Date.now().toString().slice(-6),
-        method, accNum, amount, date: new Date().toLocaleDateString(), status: 'Pending'
+    const newRequest = {
+        id: 'PPB-' + Date.now().toString().slice(-5),
+        userName: accName,
+        accountNumber: accNum,
+        method: method,
+        amount: amount,
+        time: new Date().toLocaleString()
     };
-    
-    if(!currentUser.withdrawals) currentUser.withdrawals = [];
-    currentUser.withdrawals.unshift(trans);
 
-    // ڈیٹا سیو کریں
-    if(typeof saveUsers === 'function') {
+    try {
+        // 1. کلاؤڈ سے پرانا ڈیٹا منگوائیں
+        let getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_API_KEY }
+        });
+        let getData = await getRes.json();
+        
+        let currentRequests = [];
+        if (getData.record && Array.isArray(getData.record.requests)) {
+            currentRequests = getData.record.requests;
+        }
+
+        // 2. نئی ریکوئسٹ لسٹ میں شامل کریں
+        currentRequests.push(newRequest);
+
+        // 3. کلاؤڈ پر دوبارہ سیو کریں
+        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_API_KEY
+            },
+            body: JSON.stringify({ requests: currentRequests })
+        });
+
+        // یوزر کا بیلنس اپڈیٹ کریں
+        currentUser.balance -= amount;
         saveUsers();
-    } else {
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateUI();
+
+        alert("🎉 آپ کی ودڈرا ریکوئسٹ کامیابی سے جمع ہو گئی ہے!");
+
+    } catch (error) {
+        console.error(error);
+        alert("🛑 ریکوئسٹ بھیجنے میں مسئلہ آیا، دوبارہ کوشش کریں۔");
     }
-
-    // انٹرفیس اپڈیٹ کریں
-    if(typeof updateUI === 'function') updateUI();
-    updateWithdrawDisplay();
-    renderWithdrawalHistory();
-
-    alert("🎉 آپ کا فارم تیار ہے! اوکے (OK) پر کلک کرتے ہی واٹس ایپ کھلے گا، وہاں سے یہ میسج ایڈمن کو سینڈ کر دیں۔");
-
-    // واٹس ایپ پر بھیجیں
-    window.open(`https://api.whatsapp.com/send?phone=${adminWhatsApp}&text=${encodeURIComponent(msgText)}`, '_blank');
-}
-
-// ==========================================================
-// 3. RENDER WITHDRAWAL HISTORY
-// ==========================================================
-function renderWithdrawalHistory() {
-    const container = document.getElementById('wd-history');
-    if (!container) return;
-
-    if (!currentUser.withdrawals || currentUser.withdrawals.length === 0) {
-        container.innerHTML = "No transactions yet.";
-        return;
-    }
-
-    container.innerHTML = currentUser.withdrawals.map(w => `
-        <div class="flex-between" style="border-bottom: 1px solid #222; padding: 5px 0;">
-            <span>${w.date} - ${w.method}</span>
-            <span class="text-gold">Rs. ${w.amount} (${w.status})</span>
-        </div>
-    `).join('');
         }
         
+
         /* 
         ========================================
         MISC UI RENDERING
