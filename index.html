@@ -1375,19 +1375,23 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         WITHDRAWAL SYSTEM
         ========================================
         */
-    function processWithdrawal() {
-    // صارف کا ڈیٹا اکٹھا کریں
+    // ================================================================
+// 🟢 ہماری آخری اور حتمی تبدیلی (نوٹیفکیشن والا نظام)
+// ================================================================
+
+function processWithdrawal() {
+    // 1. صارف کا ڈیٹا اکٹھا کریں
     const method = document.getElementById('wd-method').value;
     const accNum = document.getElementById('wd-acc-num').value;
     const accName = document.getElementById('wd-acc-name').value;
     const amount = parseInt(document.getElementById('wd-amount').value);
 
-    // ویری فکیشن (اگر کچھ خالی ہو)
+    // 2. ویری فکیشن (اگر کچھ خالی ہو یا غلط ہو)
     if (!accNum || !accName || !amount) return alert("براہ کرم تمام خانے بھریں!");
     if (amount < 100) return alert("کم از کم 100 روپے نکال سکتے ہیں!");
     if (amount > currentUser.balance) return alert("آپ کے اکاؤنٹ میں اتنی رقم نہیں ہے!");
 
-    // بیلنس کم کریں اور ٹرانزیکشن بنائیں
+    // 3. بیلنس کم کریں اور ٹرانزیکشن ریکارڈ کریں
     currentUser.balance -= amount;
     const trans = {
         id: 'PPB' + Date.now().toString().slice(-6),
@@ -1397,65 +1401,22 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
     };
     currentUser.withdrawals.unshift(trans);
 
-    // ڈیٹا سیو کریں
+    // 4. ڈیٹا سیو کریں اور UI اپ ڈیٹ کریں
     saveUsers();
     updateUI();
     renderWithdrawalHistory();
 
-    // ==========================================
-    // ✅ یہ حصہ آپ کی ویب سائٹ کو `localStorage` میں ڈیٹا سیو کرنے کے لیے ہے
-    // ==========================================
-    const logData = {
-        user: currentUser.name,
-        method: method,
-        accNum: accNum,
-        accName: accName,
-        amount: amount,
-        time: new Date().toLocaleString(),
-        transId: trans.id
-    };
+    // ================================================================
+    // 📲 یہ حصہ صارف کے ڈیٹا کو ایک "نوٹیفکیشن" کی شکل میں آپ کو دکھائے گا
+    // ================================================================
+    const msg = `🤑 *نیا وڈرا کلیم!*\n\n👤 صارف: ${currentUser.name}\n💰 رقم: ${amount} PKR\n🏦 اکاؤنٹ: ${accNum} (${method})\n🆔 آئی ڈی: ${trans.id}`;
+    
+    // یہ آپ کے موبائل پر ایک نوٹیفکیشن کی طرح آئے گا
+    alert("📢 **نوٹیفکیشن**\n\n" + msg);
+    // ================================================================
 
-    // پرانے کلیمز کی لسٹ میں نیا شامل کریں
-    let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
-    allClaims.push(logData);
-    localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
-
-    // ==========================================
-    // ✅ صارف کو ویب سائٹ پر میسج (WhatsApp نہیں کھلے گا)
-    // ==========================================
+    // 5. صارف کو کامیابی کا پیغام دیں
     alert(`✅ آپ کی درخواست موصول ہو گئی ہے! ریف آئی ڈی: ${trans.id}. ہم 3 سے 7 دنوں میں آپ کے اکاؤنٹ میں رقم بھیج دیں گے۔`);
-        }
-    // ==========================================
-        }
-      // ==========================================
-// 📌 ایڈمن پینل کے لیے localStorage میں ڈیٹا سیو کریں
-// ==========================================
-const logData = {
-    user: currentUser.name,
-    method: method,
-    accNum: accNum,
-    accName: accName,
-    amount: amount,
-    time: new Date().toLocaleString(),
-    transId: trans.id
-};
-
-let allClaims = JSON.parse(localStorage.getItem('allWithdrawals')) || [];
-allClaims.push(logData);
-localStorage.setItem('allWithdrawals', JSON.stringify(allClaims));
-// ==========================================
-        function renderWithdrawalHistory() {
-            const container = document.getElementById('wd-history');
-            if (currentUser.withdrawals.length === 0) {
-                container.innerHTML = "No transactions yet.";
-                return;
-            }
-            container.innerHTML = currentUser.withdrawals.map(w => `
-                <div class="flex-between" style="border-bottom: 1px solid #222; padding: 5px 0;">
-                    <span>${w.date} - ${w.method}</span>
-                    <span class="text-gold">Rs. ${w.amount} (${w.status})</span>
-                </div>
-            `).join('');
         }
 
         /* 
