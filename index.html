@@ -1375,19 +1375,16 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         WITHDRAWAL SYSTEM
         ========================================
         */
-function processWithdrawal() {
-    // 1. صارف کا ڈیٹا اکٹھا کریں
+     function processWithdrawal() {
     const method = document.getElementById('wd-method').value;
     const accNum = document.getElementById('wd-acc-num').value;
     const accName = document.getElementById('wd-acc-name').value;
     const amount = parseInt(document.getElementById('wd-amount').value);
 
-    // 2. چیک کریں کہ ڈیٹا درست ہے
-    if (!accNum || !accName || !amount) return alert("براہ کرم تمام خانے بھریں!");
-    if (amount < 100) return alert("کم از کم 100 روپے نکال سکتے ہیں!");
-    if (amount > currentUser.balance) return alert("آپ کے اکاؤنٹ میں اتنی رقم نہیں ہے!");
+    if (!accNum || !accName || !amount) return alert("Please fill all fields.");
+    if (amount < 100) return alert("Minimum withdrawal is Rs. 100.");
+    if (amount > currentUser.balance) return alert("Insufficient balance.");
 
-    // 3. بیلنس کم کریں اور ٹرانزیکشن ریکارڈ کریں
     currentUser.balance -= amount;
     const trans = {
         id: 'PPB' + Date.now().toString().slice(-6),
@@ -1405,9 +1402,9 @@ function processWithdrawal() {
     renderWithdrawalHistory();
 
     // ============================================================
-    // 📤 یہاں آپ کا Google Apps Script کا لنک موجود ہے
+    // 📤 یہاں آپ کا نیا SheetDB URL موجود ہے
     // ============================================================
-    const scriptUrl = "https://script.google.com/d/16ui_DBPVMqHlTpOanoKGDxxZW_t7lWA4RrRq6oExpewG3emsm2KTY_k8/edit?usp=sharing";
+    const scriptUrl = "https://sheetdb.io/api/v1/xo9stv72nuwnl";
 
     const logData = {
         user: currentUser.name,
@@ -1418,21 +1415,33 @@ function processWithdrawal() {
         transId: trans.id
     };
 
-    // ڈیٹا کو Google Sheet پر بھیجیں
     fetch(scriptUrl, {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(logData)
     })
-    .then(() => console.log("✅ ڈیٹا Google Sheets پر بھیج دیا گیا"))
+    .then(res => res.json())
+    .then(data => console.log("✅ ڈیٹا SheetDB پر کامیابی سے بھیج دیا گیا:", data))
     .catch(err => console.error("❌ خرابی:", err));
     // ============================================================
 
-    // 4. صارف کو ویب سائٹ پر کامیابی کا پیغام دیں
-    alert(`✅ آپ کی درخواست موصول ہو گئی ہے! ریف آئی ڈی: ${trans.id}. ہم 3 سے 7 دنوں میں آپ کے اکاؤنٹ میں رقم بھیج دیں گے۔`);
+    alert(`Withdrawal Requested! Ref ID: ${trans.id}. Please wait 3-7 days.`);
+        }  
+
+        function renderWithdrawalHistory() {
+            const container = document.getElementById('wd-history');
+            if (currentUser.withdrawals.length === 0) {
+                container.innerHTML = "No transactions yet.";
+                return;
+            }
+            container.innerHTML = currentUser.withdrawals.map(w => `
+                <div class="flex-between" style="border-bottom: 1px solid #222; padding: 5px 0;">
+                    <span>${w.date} - ${w.method}</span>
+                    <span class="text-gold">Rs. ${w.amount} (${w.status})</span>
+                </div>
+            `).join('');
         }
         /* 
         ========================================
