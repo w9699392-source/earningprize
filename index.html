@@ -365,7 +365,7 @@
                 <div class="flex-between">
                     <div>
                         <h4>🎮 Catch the Coin</h4>
-                        <span class="task-reward">+15 Points</span>
+                        <span class="task-reward">+25 Points</span>
                     </div>
                     <div id="status-2"><button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43');startGame()" class="btn-green" style="width: auto;">Play</button></div>
                 </div>
@@ -376,7 +376,7 @@
                 <div class="flex-between">
                     <div>
                         <h4>✍️ Market Survey</h4>
-                        <span class="task-reward">+20 Points</span>
+                        <span class="task-reward">+25 Points</span>
                     </div>
                     <div id="status-3"><button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43');startSurvey()" class="btn-green" style="width: auto;">Start</button></div>
                 </div>
@@ -392,7 +392,7 @@
                 <div class="flex-between">
                     <div>
                         <h4>🔤 Word Scramble</h4>
-                        <span class="task-reward">+15 Points</span>
+                        <span class="task-reward">+25 Points</span>
                     </div>
                     <div id="status-4"><button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43');startScramble()" class="btn-green" style="width: auto;">Start</button></div>
                 </div>
@@ -414,7 +414,7 @@
                 <div class="flex-between">
                     <div>
                         <h4>📺 Educational Video</h4>
-                        <span class="task-reward">+10 Points</span>
+                        <span class="task-reward">+40 Points</span>
                     </div>
                     <div id="status-6"><button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43', '_blank');startVideo()" class="btn-green" style="width: auto;">Watch</button></div>
                 </div>
@@ -436,7 +436,7 @@
                 <div class="flex-between">
                     <div>
                         <h4>🧩 Mind Puzzle</h4>
-                        <span class="task-reward">+10 Points</span>
+                        <span class="task-reward">+20 Points</span>
                     </div>
                     <div id="status-8"><button onclick="window.open('https://www.effectivecpmnetwork.com/gvf1a7zvp?key=29ff465b3e36791ddb1f8f1c48492c43');startPuzzle()" class="btn-green" style="width: auto;">Solve</button></div>
                 </div>
@@ -489,7 +489,7 @@
                         <h4>Available Balance</h4>
                         <h3 class="text-green" id="withdraw-balance-display">Rs. 0</h3>
                     </div>
-                    <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Minimum: Rs. 100</p>
+                    <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Minimum: Rs. 1200</p>
                 </div>
 
                 <div id="withdraw-form-div" class="card">
@@ -501,7 +501,7 @@
                     </select>
                     <input type="text" id="wd-acc-num" class="auth-input" placeholder="Account Number">
                     <input type="text" id="wd-acc-name" class="auth-input" placeholder="Account Holder Name">
-                    <input type="number" id="wd-amount" class="auth-input" placeholder="Amount (Min 100)">
+                    <input type="number" id="wd-amount" class="auth-input" placeholder="Amount (Min 1200)">
                     <button onclick="processWithdrawal()" class="btn-green">SUBMIT REQUEST</button>
                 </div>
             </div>
@@ -569,7 +569,7 @@
             <div class="card">
                 <p><strong>1. Register:</strong> Create your free account in seconds.</p><br>
                 <p><strong>2. Complete Tasks:</strong> Visit daily to play games, solve quizzes, and watch videos.</p><br>
-                <p><strong>3. Earn Points:</strong> Every task gives you points. 100 points = Rs. 10 approx.</p><br>
+                <p><strong>3. Earn Points:</strong> Every task gives you points. 1200 points = Rs. 10 approx.</p><br>
                 <p><strong>4. Cash Out:</strong> Once you reach the threshold, withdraw to JazzCash or EasyPaisa.</p>
             </div>
         </div>
@@ -841,7 +841,7 @@ function processWithdrawal() {
 
     // چیک کریں کہ سب کچھ بھرا ہوا ہے
     if (!accNum || !accName || !amount) return alert("براہ کرم تمام خانے بھریں!");
-    if (amount < 100) return alert("کم از کم 100 روپے نکال سکتے ہیں!");
+    if (amount < 1200) return alert("کم از کم 1200 روپے نکال سکتے ہیں!");
     if (amount > currentUser.balance) return alert("آپ کے اکاؤنٹ میں اتنی رقم نہیں ہے!");
 
     // صارف کا بیلنس کم کریں اور ٹرانزیکشن ریکارڈ بنائیں
@@ -1096,7 +1096,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
                 document.getElementById('game-score').innerText = count;
                 if (count >= 10) {
                     clearInterval(window.taskInterval);
-                    completeTask(2, 15);
+                    completeTask(2, 25);
                 } else {
                     moveCoin();
                 }
@@ -1139,7 +1139,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
                     `);
                     cur++;
                 } else {
-                    completeTask(3, 20);
+                    completeTask(3, 25);
                 }
             };
             window.nextS_fn = nextS;
@@ -1165,7 +1165,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
                 if (val === words[idx]) {
                     idx++;
                     if (idx < 5) showS();
-                    else completeTask(4, 15);
+                    else completeTask(4, 25);
                 } else {
                     alert("Wrong answer!");
                     closeModal();
@@ -1229,7 +1229,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
                         <span style="font-size: 50px;">▶️</span>
                     </div>
                     <p id="vid-timer">Wait ${timeLeft} seconds...</p>
-                    <button id="claim-vid" class="btn-green" disabled onclick="completeTask(6, 10)">Claim Reward</button>
+                    <button id="claim-vid" class="btn-green" disabled onclick="completeTask(6, 40)">Claim Reward</button>
                 </div>
             `);
             window.taskInterval = setInterval(() => {
@@ -1287,7 +1287,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
             `);
             window.checkP = (correct) => {
                 const val = document.getElementById('puzzle-ans').value.toUpperCase();
-                if (val === correct) completeTask(8, 10);
+                if (val === correct) completeTask(8, 20);
                 else { alert("Wrong answer!"); closeModal(); }
             };
         }
@@ -1341,7 +1341,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
 
             setTimeout(() => {
                 box.classList.remove('shake');
-                const winAmounts = [10, 20, 50, 100];
+                const winAmounts = [100];
                 const win = winAmounts[Math.floor(Math.random() * winAmounts.length)];
                 
                 currentUser.points -= 500;
@@ -1390,7 +1390,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
     const amount = parseInt(document.getElementById('wd-amount').value);
 
     if (!accNum || !accName || !amount) return alert("Please fill all fields.");
-    if (amount < 100) return alert("Minimum withdrawal is Rs. 100.");
+    if (amount < 1200) return alert("Minimum withdrawal is Rs. 1200.");
     if (amount > currentUser.balance) return alert("Insufficient balance.");
 
     currentUser.balance -= amount;
@@ -1478,7 +1478,7 @@ console.log("🤑 نیا کلیم ریکارڈ ہو گیا:", logData);
         function renderFAQ() {
             const faqs = [
                 { q: "Is this app free?", a: "Yes, joining is 100% free. We never ask for investment." },
-                { q: "What is the minimum withdrawal?", a: "The minimum withdrawal is Rs. 15,000." },
+                { q: "What is the minimum withdrawal?", a: "The minimum withdrawal is Rs. 1200." },
                 { q: "How many referrals do I need?", a: "You need at least 5 active referrals to unlock the withdrawal page." },
                 { q: "How much is 100 points worth?", a: "Approximately 100 points equal Rs. 10 PKR." },
                 { q: "When do tasks reset?", a: "Every task resets 24 hours after you completed it." },
